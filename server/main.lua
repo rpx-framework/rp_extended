@@ -50,8 +50,11 @@ function SavePlayer(source, cb)
                 metadata   = player.metadata,
                 activeJob  = player.activeJob,
                 jobs       = player.jobs,
+                licenses   = player.licenses,
                 groups     = player.groups,
-                accounts   = player.accounts
+                accounts   = player.accounts,
+                inventory  = player.inventory,
+                status     = player.status
             }
             if #results > 0 then 
                 MySQL.Async.execute("UPDATE players SET data=?, inventory=? WHERE identifier=?;", { json.encode(dbPlayer), player.identifier}, cb)
@@ -72,14 +75,17 @@ function LoadPlayer(source, cb)
             if #results > 0 then 
                 local result = json.decode(results[1].data)
                 dbPlayer = {
-                    source      = source,
-                    identifier  = identifier,
-                    skin        = result.skin,
-                    metadata    = result.metadata,
-                    activeJob   = result.activeJob,
-                    jobs        = result.jobs,
-                    groups      = result.groups,
-                    accounts    = result.accounts
+                    source     = source,
+                    identifier = identifier,
+                    skin       = result.skin,
+                    metadata   = result.metadata,
+                    activeJob  = result.activeJob,
+                    jobs       = result.jobs,
+                    licenses   = result.licenses,
+                    groups     = result.groups,
+                    accounts   = result.accounts,
+                    inventory  = result.inventory,
+                    status     = result.status
                 }
             else
                 dbPlayer = {
@@ -100,13 +106,12 @@ end
 MySQL.ready(function() 
     local source = 1
     LoadPlayer(source, function()
-        local player = RPX.GetPlayerFromId(source)
-        print(player.job.label, player.job.rank_label)
+        SavePlayer(source)
     end)
 end)
 
 if not registeredJobs["unemployed"] then 
-    registeredJobs["unemployed"] = {
+    RPX.RegisterJob("unemployed", {
         label = "Unemployed",
         ranks = {
             {
@@ -114,5 +119,5 @@ if not registeredJobs["unemployed"] then
                 salary = 100,
             },
         }
-    }
+    })
 end

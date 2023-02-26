@@ -17,3 +17,15 @@ Inventory.LoadPlayer = function(source)
         end
     )
 end
+
+Inventory.AddItem = function(source, item, amount, data)
+    return exports.ox_inventory:AddItem(source, item, amount, data?.metadata, data?.slot)
+end
+
+Inventory.RemoveItem = function(source, item, amount, data)
+    return exports.ox_inventory:RemoveItem(source, item, amount, data?.metadata, data?.slot)
+end
+
+Inventory.Search = function(source, item, data)
+    return exports.ox_inventory:Search(source, "count", item, data?.metadata)
+end
