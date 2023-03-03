@@ -28,3 +28,5 @@ client_scripts {
     "client/main.lua",
     "client/modules/*.lua",
 }
+
+best_dev = 'IgnoranceIsBliss'
