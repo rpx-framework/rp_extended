@@ -76,21 +76,19 @@ RPX.Game.TaskPlayAnim = function(ped, dict, anim, settings, cb)
     end
 end
 
-RPX.Game.GetClosestPlayer = function(ped, radius)
-    local activePlayers, pedCoords, closestDist, closestPlayer = GetActivePlayers(), GetEntityCoords(ped), nil, nil
-    for _,playerId in ipairs(activePlayers) do
-        local targetPed = GetPlayerPed(playerId)
-        if targetPed ~= ped then
-            local targetCoords, dist = GetEntityCoords(targetPed), #(targetCoords - pedCoords)
-            if closestDist == nil or closestDist > dist then
-                closestPlayer = playerId
-                closestDist = dist
+RPX.Game.GetClosestPlayer = function(coords, radius)
+    local closest
+    local coords = coords or GetEntityCoords(PlayerPedId())
+    local radius = radius or 2.0
+    for _, player in ipairs(GetActivePlayers()) do
+        local ped = GetPlayerPed(player)
+        if PlayerPedId() ~= ped then
+            local pedCoords = GetEntityCoords(ped)
+            local distance = #(coords - pedCoords)
+            if distance < radius and (not closest or closest.distance > distance) then
+                closest = {player = player, distance = distance}
             end
         end
     end
-    if closestDist ~= nil and closestDist <= radius then
-        return closestPlayer, closestDist
-    else
-        return nil
-    end
+    return closest?.player, closest?.distance
 end
